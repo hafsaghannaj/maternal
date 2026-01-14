@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Safeguarding Maternal Health with Privacy-First Predictive Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --glass: rgba(255, 255, 255, 0.78);
+        --ink: #101828;
+        --muted: #667085;
+        --accent: #3aa0ff;
+        --accent-2: #6dd3a0;
+        --shadow: 0 20px 60px rgba(16, 24, 40, 0.12);
+        --card-border: rgba(255, 255, 255, 0.6);
+        --row-bg: rgba(255, 255, 255, 0.6);
+        --stat-bg: rgba(255, 255, 255, 0.7);
+        --bg-grad-1: #dbe9ff;
+        --bg-grad-2: #dff6eb;
+      }
+      [data-theme="dark"] {
+        --bg: #0b1020;
+        --glass: rgba(15, 23, 42, 0.78);
+        --ink: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #6aa9ff;
+        --accent-2: #6dd3a0;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        --card-border: rgba(148, 163, 184, 0.18);
+        --row-bg: rgba(15, 23, 42, 0.7);
+        --stat-bg: rgba(15, 23, 42, 0.6);
+        --bg-grad-1: #1f2a44;
+        --bg-grad-2: #123b2c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: "Manrope", "Avenir Next", sans-serif;
+        margin: 0;
+        color: var(--ink);
+        background: radial-gradient(1200px 600px at 20% -10%, var(--bg-grad-1) 0%, transparent 60%),
+                    radial-gradient(900px 500px at 120% 20%, var(--bg-grad-2) 0%, transparent 60%),
+                    var(--bg);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+      .shell {
+        width: min(980px, 100%);
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+      .card {
+        background: var(--glass);
+        backdrop-filter: blur(18px);
+        border-radius: 20px;
+        padding: 28px 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--card-border);
+        animation: rise 600ms ease-out both;
+      }
+      .card:nth-child(2) { animation-delay: 120ms; }
+      h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: 0.2px; }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(58, 160, 255, 0.12);
+        color: #1b4b91;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .muted { color: var(--muted); font-size: 14px; margin-top: 8px; }
+      .endpoints { display: grid; gap: 10px; margin: 18px 0 0; }
+      .row {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--row-bg);
+      }
+      .method {
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.6px;
+        color: #0b6bcb;
+      }
+      .path { font-weight: 600; }
+      .note { color: var(--muted); font-size: 13px; }
+      .mini { display: grid; gap: 12px; }
+      .stat {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: var(--stat-bg);
+      }
+      .stat h3 { margin: 0 0 6px; font-size: 14px; color: var(--muted); }
+      .stat p { margin: 0; font-weight: 700; }
+      .badge {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 0 6px rgba(58, 160, 255, 0.1);
+      }
+      .tabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding: 6px;
+        border-radius: 999px;
+        background: var(--row-bg);
+      }
+      .tab-group { display: inline-flex; gap: 8px; }
+      .tab {
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        color: var(--muted);
+      }
+      .tab.active { color: var(--ink); background: rgba(58, 160, 255, 0.16); }
+      .theme-toggle {
+        border: none;
+        background: var(--stat-bg);
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .chart-card {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 16px;
+        background: var(--stat-bg);
+      }
+      .chart-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      #training-chart { width: 100%; height: 220px; }
+      .caption { margin-top: 10px; font-size: 13px; color: var(--muted); }
+      @keyframes rise {
+        from { transform: translateY(12px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @media (max-width: 820px) {
+        .shell { grid-template-columns: 1fr; }
+        body { padding: 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="card">
+        <div class="tabs">
+          <div class="tab-group">
+            <a class="tab active" href="index.html">Overview</a>
+            <a class="tab" href="metrics.html">Metrics</a>
+            <a class="tab" href="about.html">About</a>
+          </div>
+          <button class="theme-toggle" id="theme-toggle" type="button">Dark</button>
+        </div>
+        <div class="pill"><span class="badge"></span>Static Demo</div>
+        <h1>Safeguarding Maternal Health with Privacy-First Predictive Analytics</h1>
+        <div class="muted">Federated maternal risk prediction service - static preview.</div>
+        <div class="endpoints">
+          <div class="row">
+            <div class="method">POST</div>
+            <div><span class="path">/api/initialize</span> <span class="note">Initialize federated learning</span></div>
+          </div>
+          <div class="row">
+            <div class="method">POST</div>
+            <div><span class="path">/api/train</span> <span class="note">Run federated training</span></div>
+          </div>
+          <div class="row">
+            <div class="method">GET</div>
+            <div><span class="path">/api/evaluate</span> <span class="note">Evaluate current model</span></div>
+          </div>
+          <div class="row">
+            <div class="method">POST</div>
+            <div><span class="path">/api/predict</span> <span class="note">Predict maternal risk</span></div>
+          </div>
+          <div class="row">
+            <div class="method">GET</div>
+            <div><span class="path">/api/history</span> <span class="note">Get training history</span></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Training Metrics (sample)</div>
+          <canvas id="training-chart"></canvas>
+          <div class="caption">Live metrics render in the Flask app.</div>
+        </div>
+      </div>
+      <div class="card mini">
+        <div class="stat">
+          <h3>Device</h3>
+          <p>CPU</p>
+        </div>
+        <div class="stat">
+          <h3>Hospitals</h3>
+          <p>3</p>
+        </div>
+        <div class="stat">
+          <h3>Features</h3>
+          <p>25</p>
+        </div>
+        <div class="stat">
+          <h3>Predictions served</h3>
+          <p>128</p>
+        </div>
+        <div class="stat">
+          <h3>Training rounds</h3>
+          <p>5</p>
+        </div>
+        <div class="stat">
+          <h3>Latest model</h3>
+          <p>v3</p>
+          <span class="note">Download requires backend</span>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        root.setAttribute("data-theme", savedTheme);
+      }
+      function updateToggleLabel() {
+        const isDark = root.getAttribute("data-theme") === "dark";
+        themeToggle.textContent = isDark ? "Light" : "Dark";
+      }
+      themeToggle.addEventListener("click", () => {
+        const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+        updateToggleLabel();
+      });
+      updateToggleLabel();
+
+      const ctx = document.getElementById("training-chart");
+      if (ctx && window.Chart) {
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: ["Round 1", "Round 2", "Round 3", "Round 4", "Round 5"],
+            datasets: [
+              {
+                label: "Train Loss",
+                data: [0.68, 0.55, 0.47, 0.41, 0.36],
+                borderColor: "#3aa0ff",
+                backgroundColor: "rgba(58, 160, 255, 0.2)",
+                yAxisID: "y",
+                tension: 0.35
+              },
+              {
+                label: "Test Accuracy",
+                data: [0.64, 0.71, 0.78, 0.81, 0.84],
+                borderColor: "#6dd3a0",
+                backgroundColor: "rgba(109, 211, 160, 0.2)",
+                yAxisID: "y1",
+                tension: 0.35
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { position: "left", title: { display: true, text: "Loss" } },
+              y1: {
+                position: "right",
+                title: { display: true, text: "Accuracy" },
+                grid: { drawOnChartArea: false },
+                min: 0,
+                max: 1
+              }
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
