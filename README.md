@@ -11,7 +11,7 @@ Privacy-first maternal risk prediction using federated learning. This service si
 
 ## Quick Start
 ```bash
-cd "/Users/hafsaghannaj/Desktop/Maternal Health Risk Prediction"
+cd "/Users/hafsaghannaj/Desktop/Maternal"
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
