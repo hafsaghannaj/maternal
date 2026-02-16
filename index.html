@@ -42,19 +42,22 @@
     }
 
     html {
-      overflow-y: scroll;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      height: 100%;
     }
 
     body {
-      font-family: "Manrope", "Avenir Next", sans-serif;
+      font-family: "Manrope", "English", sans-serif;
       margin: 0;
       color: var(--ink);
       background: radial-gradient(1200px 600px at 20% -10%, var(--bg-grad-1) 0%, transparent 60%),
         radial-gradient(900px 500px at 120% 20%, var(--bg-grad-2) 0%, transparent 60%),
         var(--bg);
-      min-height: 100vh;
+      min-height: 100%;
       padding: 32px;
       overflow-x: hidden;
+      overflow-anchor: none;
     }
 
     .shell {
