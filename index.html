@@ -637,6 +637,42 @@
     }
 
     let stateChart;
+
+    function renderStateChart(state, labels, values) {
+      if (stateChart) {
+        stateChart.data.labels = labels;
+        stateChart.data.datasets[0].data = values;
+        stateChart.data.datasets[0].label = `Value for ${state}`;
+        stateChart.update('none');
+      } else {
+        const sCtx = document.getElementById("state-chart").getContext("2d");
+        stateChart = new Chart(sCtx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Value for ${state}`,
+              data: values,
+              backgroundColor: 'rgba(58, 160, 255, 0.4)',
+              borderColor: '#3aa0ff',
+              borderWidth: 1,
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: false,
+            animation: false,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.1)' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+    }
+
     async function updateStateData() {
       const state = document.getElementById("state-selector").value;
       const caption = document.getElementById("state-caption");
@@ -648,44 +684,15 @@
         const labels = data && data.length ? data.map(d => (d.measure || "Indicator").split(' per ')[0]) : ["Preterm", "Low Weight", "ANC Early", "Education", "Morb."];
         const values = data && data.length ? data.map(d => parseFloat(d.value)) : [8.5, 7.8, 72.1, 65.4, 5.2];
 
-        if (stateChart) {
-          stateChart.data.labels = labels;
-          stateChart.data.datasets[0].data = values;
-          stateChart.data.datasets[0].label = `Value for ${state}`;
-          stateChart.update('none');
-        } else {
-          const sCtx = document.getElementById("state-chart").getContext("2d");
-          stateChart = new Chart(sCtx, {
-            type: 'bar',
-            data: {
-              labels: labels,
-              datasets: [{
-                label: `Value for ${state}`,
-                data: values,
-                backgroundColor: 'rgba(58, 160, 255, 0.4)',
-                borderColor: '#3aa0ff',
-                borderWidth: 1,
-                borderRadius: 8
-              }]
-            },
-            options: {
-              responsive: false,
-              animation: false,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.1)' } },
-                x: { grid: { display: false } }
-              }
-            }
-          });
-        }
+        renderStateChart(state, labels, values);
 
         caption.textContent = isFallback
           ? `Showing clinical reference benchmarks for ${state} (AHR 2024 Reference active).`
           : `Showing live performance benchmarks for ${state} (Fetched from AHR API).`;
       } catch (e) {
         console.error("State Fetch Error:", e);
+        // Ensure chart renders even if fetch fails
+        renderStateChart(state, ["Preterm", "Low Weight", "ANC Early", "Education", "Morb."], [10.4, 8.2, 76.8, 64.2, 8.5]);
         caption.textContent = "Data momentarily unavailable. Using global clinical averages.";
       }
     }
