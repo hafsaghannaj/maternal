@@ -478,11 +478,12 @@ def about_page():
                     var(--bg);
         min-height: 100vh;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         padding: 32px;
       }
       .card {
+        margin-top: 5vh;
         width: min(900px, 100%);
         background: var(--glass);
         backdrop-filter: blur(18px);
@@ -650,11 +651,12 @@ def metrics_page():
                     var(--bg);
         min-height: 100vh;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         padding: 32px;
       }
       .shell {
+        margin-top: 5vh;
         width: min(1050px, 100%);
         display: grid;
         gap: 20px;
@@ -901,11 +903,16 @@ def metrics_page():
         return Number(value).toFixed(3);
       }
 
+      let lastMetricsJSON = "";
+
       async function refreshMetrics() {
         try {
           const res = await fetch("/api/history");
           if (!res.ok) return;
-          const payload = await res.json();
+          const text = await res.text();
+          if (text === lastMetricsJSON) return;
+          lastMetricsJSON = text;
+          const payload = JSON.parse(text);
           if (payload.status !== "success") return;
           const history = payload.history || [];
           const empty = document.getElementById("metrics-empty");
@@ -951,7 +958,7 @@ def metrics_page():
       }
 
       refreshMetrics();
-      setInterval(refreshMetrics, 5000);
+      setInterval(refreshMetrics, 10000);
     </script>
   </body>
 </html>

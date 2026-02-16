@@ -58,11 +58,15 @@
       padding: 32px;
       overflow-x: hidden;
       overflow-anchor: none;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
     }
 
     .shell {
       width: min(980px, 100%);
       margin: 0 auto;
+      margin-top: 5vh;
       display: grid;
       gap: 20px;
       grid-template-columns: 1.2fr 0.8fr;
@@ -209,10 +213,10 @@
     }
 
     .chart-card {
-      margin-top: 18px;
       padding: 16px;
       border-radius: 16px;
       background: var(--stat-bg);
+      min-height: 280px;
     }
 
     .chart-title {
@@ -360,35 +364,44 @@
 
     let trainingChart;
     const ctx = document.getElementById("training-chart");
+    let lastStatsJSON = "";
+    let lastHistoryJSON = "";
 
     async function updateOverview() {
       try {
         // 1. Update Training Stats
         const historyRes = await fetch('/api/history');
-        const history = await historyRes.json();
+        const historyRaw = await historyRes.text();
+        if (historyRaw !== lastHistoryJSON) {
+          lastHistoryJSON = historyRaw;
+          const history = JSON.parse(historyRaw);
+          if (history && history.length > 0) {
+            const labels = history.map((h, i) => `Round ${i + 1}`);
+            const lossData = history.map(h => h.loss);
+            const accData = history.map(h => h.accuracy);
 
-        if (history && history.length > 0) {
-          const labels = history.map((h, i) => `Round ${i + 1}`);
-          const lossData = history.map(h => h.loss);
-          const accData = history.map(h => h.accuracy);
-
-          if (trainingChart) {
-            trainingChart.data.labels = labels;
-            trainingChart.data.datasets[0].data = lossData;
-            trainingChart.data.datasets[1].data = accData;
-            trainingChart.update();
-          } else {
-            initChart(labels, lossData, accData);
+            if (trainingChart) {
+              trainingChart.data.labels = labels;
+              trainingChart.data.datasets[0].data = lossData;
+              trainingChart.data.datasets[1].data = accData;
+              trainingChart.update('none');
+            } else {
+              initChart(labels, lossData, accData);
+            }
           }
         }
 
         // 2. Update System Stats
         const statsRes = await fetch('/api/stats');
-        const stats = await statsRes.json();
-        if (stats) {
-          document.querySelectorAll('.stat p')[3].textContent = stats.predictions_served || 0;
-          document.getElementById('model-ver').textContent = stats.model_version.split('_v')[1] || stats.model_version;
-          document.querySelector('.pill').innerHTML = `<span class="badge"></span>Live: ${stats.model_version}`;
+        const statsRaw = await statsRes.text();
+        if (statsRaw !== lastStatsJSON) {
+          lastStatsJSON = statsRaw;
+          const stats = JSON.parse(statsRaw);
+          if (stats) {
+            document.querySelectorAll('.stat p')[3].textContent = stats.predictions_served || 0;
+            document.getElementById('model-ver').textContent = stats.model_version.split('_v')[1] || stats.model_version;
+            document.querySelector('.pill').innerHTML = `<span class="badge"></span>Live: ${stats.model_version}`;
+          }
         }
 
         // 3. Update Calibration Status
@@ -432,7 +445,8 @@
           ]
         },
         options: {
-          responsive: true,
+          responsive: false,
+          animation: false,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
@@ -458,7 +472,7 @@
           if (popChart) {
             popChart.data.labels = labels;
             popChart.data.datasets[0].data = values;
-            popChart.update();
+            popChart.update('none');
           } else {
             const pCtx = document.getElementById("population-chart");
             popChart = new Chart(pCtx, {
@@ -476,7 +490,8 @@
               },
               options: {
                 indexAxis: 'y',
-                responsive: true,
+                responsive: false,
+                animation: false,
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {

@@ -57,6 +57,9 @@
       min-height: 100%;
       padding: 32px;
       overflow-x: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
       /* Stabilize scroll position during content updates */
       overflow-anchor: none;
     }
@@ -66,6 +69,7 @@
       display: grid;
       gap: 20px;
       margin: 0 auto;
+      margin-top: 5vh;
       /* Prevent layout jumps */
       contain: layout;
     }
@@ -346,11 +350,16 @@
     });
     updateToggleLabel();
 
+    let lastHistoryJSON = "";
+
     async function updateMetrics() {
       try {
         const response = await fetch('/api/history');
-        const history = await response.json();
+        const raw = await response.text();
+        if (raw === lastHistoryJSON) return;
+        lastHistoryJSON = raw;
 
+        const history = JSON.parse(raw);
         if (history && history.length > 0) {
           const latest = history[history.length - 1];
 
