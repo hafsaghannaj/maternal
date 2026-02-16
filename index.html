@@ -639,11 +639,17 @@
     let stateChart;
 
     function renderStateChart(state, labels, values) {
+      const hue = (state.charCodeAt(0) * 10 + state.charCodeAt(1)) % 360;
+      const bgColor = `hsla(${hue}, 70%, 65%, 0.4)`;
+      const borderColor = `hsla(${hue}, 70%, 55%, 1)`;
+
       if (stateChart) {
         stateChart.data.labels = labels;
         stateChart.data.datasets[0].data = values;
         stateChart.data.datasets[0].label = `Value for ${state}`;
-        stateChart.update('none');
+        stateChart.data.datasets[0].backgroundColor = bgColor;
+        stateChart.data.datasets[0].borderColor = borderColor;
+        stateChart.update();
       } else {
         const sCtx = document.getElementById("state-chart").getContext("2d");
         stateChart = new Chart(sCtx, {
@@ -653,15 +659,14 @@
             datasets: [{
               label: `Value for ${state}`,
               data: values,
-              backgroundColor: 'rgba(58, 160, 255, 0.4)',
-              borderColor: '#3aa0ff',
+              backgroundColor: bgColor,
+              borderColor: borderColor,
               borderWidth: 1,
               borderRadius: 8
             }]
           },
           options: {
             responsive: false,
-            animation: false,
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
