@@ -4,5 +4,8 @@ data/nchs/
 __pycache__/
 *.pyc
 .DS_Store
-artemis.sqlite3
+# artemis.sqlite3  <-- Allowing database for persistence
 saved_models/
+
+# Keep raw data ignored but allow calibration results
+!nationality/calibration_params.json
