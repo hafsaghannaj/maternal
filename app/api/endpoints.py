@@ -771,21 +771,29 @@ def metrics_page():
         height: 250px;
         margin: 0 auto;
         border-radius: 50%;
-        background: 
-          repeating-conic-gradient(from 0deg, rgba(148, 163, 184, 0.1) 0deg, rgba(148, 163, 184, 0.1) 1deg, transparent 1deg, transparent 12deg),
-          radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(246, 247, 251, 1) 100%);
+        background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(246, 247, 251, 1) 100%);
         box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02), 0 10px 30px rgba(16, 24, 40, 0.04);
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-      [data-theme="dark"] .orbital {
-        background: 
-          repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.05) 0deg, rgba(255, 255, 255, 0.05) 1deg, transparent 1deg, transparent 12deg),
-          radial-gradient(circle at center, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 100%);
+        overflow: hidden;
       }
       .orbital::before {
         content: "";
+        position: absolute;
+        inset: -50%;
+        background: repeating-conic-gradient(from 0deg, rgba(148, 163, 184, 0.15) 0deg, rgba(148, 163, 184, 0.15) 1deg, transparent 1.2deg, transparent 15deg);
+        border-radius: 50%;
+        animation: spin-slow 60s linear infinite;
+        z-index: 0;
+      }
+      [data-theme="dark"] .orbital {
+        background: radial-gradient(circle at center, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 100%);
+      }
+      [data-theme="dark"] .orbital::before {
+        background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.08) 0deg, rgba(255, 255, 255, 0.08) 1deg, transparent 1.2deg, transparent 15deg);
+      }
+      .orbital .ring-outer {
         position: absolute;
         inset: 10px;
         border-radius: 50%;
@@ -795,8 +803,7 @@ def metrics_page():
         opacity: 0.35;
         z-index: 1;
       }
-      .orbital::after {
-        content: "";
+      .orbital .ring-inner {
         position: absolute;
         inset: 45px;
         border-radius: 50%;
@@ -805,6 +812,10 @@ def metrics_page():
         -webkit-mask: radial-gradient(circle at center, transparent 82%, black 83%);
         opacity: 0.35;
         z-index: 1;
+      }
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
       .orbit {
         position: absolute;
@@ -881,6 +892,8 @@ def metrics_page():
           <div class="metric-card">
             <h3>Train Loss + Test Accuracy</h3>
             <div class="orbital" id="gauge-loss-acc" style="--primary: 0.48; --secondary: 0.77;">
+              <div class="ring-outer"></div>
+              <div class="ring-inner"></div>
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
@@ -895,6 +908,8 @@ def metrics_page():
           <div class="metric-card">
             <h3>AUC + F1</h3>
             <div class="orbital" id="gauge-auc-f1" style="--primary: 0.81; --secondary: 0.43;">
+              <div class="ring-outer"></div>
+              <div class="ring-inner"></div>
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
@@ -909,6 +924,8 @@ def metrics_page():
           <div class="metric-card">
             <h3>Precision + Recall</h3>
             <div class="orbital" id="gauge-prec-rec" style="--primary: 0.31; --secondary: 0.72;">
+              <div class="ring-outer"></div>
+              <div class="ring-inner"></div>
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
