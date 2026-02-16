@@ -96,12 +96,59 @@ def _generate_calibrated(n_samples, random_state):
     return df
 
 
+from app.data.natality_loader import NatalityMicrodataLoader
+
+def _get_nchs_file():
+    """Find unzipped NCHS txt file."""
+    nchs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'nchs', 'natality')
+    if not os.path.exists(nchs_dir):
+        return None
+    txt_files = [f for f in os.listdir(nchs_dir) if f.endswith('.txt')]
+    return os.path.join(nchs_dir, txt_files[0]) if txt_files else None
+
 def generate_synthetic_maternal_data(n_samples=1000, n_features=25, random_state=42):
     """
-    Generate synthetic maternal health data.
-    Uses NCHS-calibrated distributions if calibration_params.json exists,
-    otherwise falls back to sklearn make_classification.
+    Generates data using real NCHS human records as seeds.
+    Base demographics (age, bmi, etc) are real; clinical labs are calibrated.
     """
+    nchs_path = _get_nchs_file()
+    
+    if nchs_path:
+        # 1. Load Real Human Records
+        loader = NatalityMicrodataLoader(nchs_path, year=2022)
+        # Load slightly more than requested to allow for filtering
+        base_df, _ = loader.load(nrows=n_samples * 2) 
+        base_df = base_df.sample(n=n_samples, random_state=random_state)
+        
+        # 2. Load Calibration for Supplementation
+        with open(CALIBRATION_PATH, 'r') as f:
+            cal = json.load(f)
+        
+        rng = np.random.RandomState(random_state)
+        
+        # 3. Fill missing clinical features (Labs, BP, Blood Glucose)
+        for feat in base_df.columns:
+            if base_df[feat].isnull().all():
+                if feat in cal:
+                    base_df[feat] = _sample_feature(cal[feat], n_samples, rng)
+                else:
+                    base_df[feat] = rng.normal(0, 1, size=n_samples)
+        
+        # 4. Fill local NaNs with column means
+        base_df = base_df.fillna(base_df.mean())
+        
+        # 5. Labeling logic (High Risk based on real features + supplemented labs)
+        risk_score = (
+            (base_df['systolicBP'] > 140).astype(int) +
+            (base_df['bloodGlucose'] > 140).astype(int) +
+            (base_df['bmi'] > 35).astype(int) +
+            (base_df['previousComplications'] == 1).astype(int)
+        )
+        base_df['high_risk'] = (risk_score >= 1).astype(int)
+        
+        return base_df[FEATURE_NAMES + ['high_risk']]
+    
+    # Fallback to pure calibrated generation if NCHS txt is missing
     if os.path.exists(CALIBRATION_PATH):
         return _generate_calibrated(n_samples, random_state)
 

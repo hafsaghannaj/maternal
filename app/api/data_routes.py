@@ -7,7 +7,7 @@ import asyncio
 from app.external.ahr_client import AHRClient
 from app.external.cdc_wonder import CDCWonderClient
 from app.external.datafenix import DataFenixClient
-from app.data.pipeline import run_data_pipeline
+from app.data.pipeline import run_data_pipeline, _run_pipeline_async
 
 data_bp = Blueprint('data_integration', __name__, url_prefix='/api/v1')
 
@@ -70,9 +70,24 @@ def get_cdc_benchmark():
 
 @data_bp.route('/data/calibrate', methods=['POST'])
 def trigger_calibration():
-    # In Flask, we trigger the Celery task directly
-    task = run_data_pipeline.delay()
-    return jsonify({"task_id": task.id, "status": "queued"})
+    is_sync = request.args.get('sync', 'false').lower() == 'true'
+    
+    if is_sync:
+        try:
+            result = run_async(_run_pipeline_async())
+            return jsonify({"status": "success", "report": result})
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+            
+    try:
+        task = run_data_pipeline.delay()
+        return jsonify({"task_id": task.id, "status": "queued"})
+    except Exception as e:
+        return jsonify({
+            "status": "error", 
+            "message": "Celery/Redis not running. Try adding ?sync=true to your request.",
+            "details": str(e)
+        }), 503
 
 @data_bp.route('/data/calibration-status', methods=['GET'])
 def get_calibration_status():
