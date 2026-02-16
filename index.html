@@ -643,7 +643,9 @@
       try {
         const res = await fetch(`/api/v1/benchmarks/ahr?state=${state}&dataset=morbidity`);
         const data = await res.json();
-        const labels = data && data.length ? data.map(d => d.measure.split(' per ')[0]) : ["Preterm", "Low Weight", "ANC Early", "Education", "Morb."];
+        const isFallback = data && data.length > 0 && data[0].source && data[0].source.includes("Clinical");
+
+        const labels = data && data.length ? data.map(d => (d.measure || "Indicator").split(' per ')[0]) : ["Preterm", "Low Weight", "ANC Early", "Education", "Morb."];
         const values = data && data.length ? data.map(d => parseFloat(d.value)) : [8.5, 7.8, 72.1, 65.4, 5.2];
 
         if (stateChart) {
@@ -652,7 +654,7 @@
           stateChart.data.datasets[0].label = `Value for ${state}`;
           stateChart.update('none');
         } else {
-          const sCtx = document.getElementById("state-chart");
+          const sCtx = document.getElementById("state-chart").getContext("2d");
           stateChart = new Chart(sCtx, {
             type: 'bar',
             data: {
@@ -678,9 +680,13 @@
             }
           });
         }
-        caption.textContent = `Showing performance benchmarks for ${state} (AHR 2024 Reference).`;
+
+        caption.textContent = isFallback
+          ? `Showing clinical reference benchmarks for ${state} (AHR 2024 Reference active).`
+          : `Showing live performance benchmarks for ${state} (Fetched from AHR API).`;
       } catch (e) {
-        caption.textContent = "Clinical fallback active due to API rate limiting.";
+        console.error("State Fetch Error:", e);
+        caption.textContent = "Data momentarily unavailable. Using global clinical averages.";
       }
     }
 

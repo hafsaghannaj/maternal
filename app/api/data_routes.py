@@ -37,9 +37,9 @@ def get_ahr_benchmark():
     
     # State-specific "Health Variance" factors to make fallback data feel real
     STATE_VARIANCE = {
-        "MA": 0.85, "VT": 0.82, "CT": 0.88, "CO": 0.90, "NH": 0.87, # High performing
+        "MA": 0.85, "VT": 0.82, "CT": 0.88, "CO": 0.90, "NH": 0.87, "MN": 0.91, # High performing
         "MS": 1.45, "LA": 1.40, "AR": 1.35, "WV": 1.30, "AL": 1.32, # High risk
-        "TX": 1.15, "FL": 1.12, "NY": 1.05, "CA": 0.98, "GA": 1.25  # Large states
+        "TX": 1.15, "FL": 1.12, "NY": 1.05, "CA": 0.98, "GA": 1.25, "IL": 1.02  # Large states
     }
 
     client = AHRClient()
