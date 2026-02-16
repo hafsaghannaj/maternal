@@ -775,101 +775,100 @@ def metrics_page():
       }
       .orbital {
         position: relative;
-        width: 240px;
-        height: 240px;
+        width: 250px;
+        height: 250px;
         margin: 0 auto;
         border-radius: 50%;
-        background:
-          conic-gradient(from -90deg, rgba(109, 211, 160, 0.35) calc(var(--secondary, 0) * 1turn), transparent 0),
-          conic-gradient(from -90deg, rgba(58, 160, 255, 0.5) calc(var(--primary, 0) * 1turn), transparent 0),
-          repeating-conic-gradient(rgba(148, 163, 184, 0.25) 0deg, rgba(148, 163, 184, 0.25) 2deg, transparent 2deg, transparent 14deg),
-          radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 55%, rgba(255, 255, 255, 0.2) 100%);
-        box-shadow: inset 0 0 40px rgba(15, 23, 42, 0.1);
+        background: 
+          repeating-conic-gradient(from 0deg, rgba(148, 163, 184, 0.1) 0deg, rgba(148, 163, 184, 0.1) 1deg, transparent 1deg, transparent 12deg),
+          radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(246, 247, 251, 1) 100%);
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02), 0 10px 30px rgba(16, 24, 40, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       [data-theme="dark"] .orbital {
-        background:
-          conic-gradient(from -90deg, rgba(109, 211, 160, 0.35) calc(var(--secondary, 0) * 1turn), transparent 0),
-          conic-gradient(from -90deg, rgba(106, 169, 255, 0.55) calc(var(--primary, 0) * 1turn), transparent 0),
-          repeating-conic-gradient(rgba(148, 163, 184, 0.18) 0deg, rgba(148, 163, 184, 0.18) 2deg, transparent 2deg, transparent 14deg),
-          radial-gradient(circle at center, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.7) 55%, rgba(15, 23, 42, 0.2) 100%);
-        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35);
+        background: 
+          repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.05) 0deg, rgba(255, 255, 255, 0.05) 1deg, transparent 1deg, transparent 12deg),
+          radial-gradient(circle at center, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 100%);
+      }
+      .orbital::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 50%;
+        background: conic-gradient(from -90deg, var(--accent) calc(var(--primary, 0) * 1turn), transparent 0);
+        mask: radial-gradient(circle at center, transparent 82%, black 83%);
+        -webkit-mask: radial-gradient(circle at center, transparent 82%, black 83%);
+        opacity: 0.35;
+        z-index: 1;
+      }
+      .orbital::after {
+        content: "";
+        position: absolute;
+        inset: 45px;
+        border-radius: 50%;
+        background: conic-gradient(from -90deg, var(--accent-2) calc(var(--secondary, 0) * 1turn), transparent 0);
+        mask: radial-gradient(circle at center, transparent 82%, black 83%);
+        -webkit-mask: radial-gradient(circle at center, transparent 82%, black 83%);
+        opacity: 0.35;
+        z-index: 1;
       }
       .orbit {
         position: absolute;
-        inset: 16px;
+        inset: 10px;
         border-radius: 50%;
-        animation: spin 10s linear infinite;
+        z-index: 5;
+        transform: rotate(calc(var(--primary, 0) * 360deg - 90deg));
+        transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .orbit::after {
         content: "";
         position: absolute;
-        top: -6px;
+        top: -4px;
         left: 50%;
         width: 10px;
         height: 10px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        background: var(--accent);
         border-radius: 50%;
         transform: translateX(-50%);
-        box-shadow: 0 0 12px rgba(58, 160, 255, 0.6);
+        box-shadow: 0 0 15px var(--accent);
       }
       .orbit.secondary {
-        inset: 32px;
-        animation-duration: 14s;
+        inset: 45px;
+        transform: rotate(calc(var(--secondary, 0) * 360deg - 90deg));
       }
       .orbit.secondary::after {
         width: 8px;
         height: 8px;
-        box-shadow: 0 0 12px rgba(109, 211, 160, 0.6);
+        background: var(--accent-2);
+        box-shadow: 0 0 15px var(--accent-2);
       }
       .center {
-        position: absolute;
-        inset: 38px;
-        border-radius: 50%;
-        background: var(--glass);
-        display: grid;
-        place-items: center;
+        position: relative;
+        z-index: 10;
         text-align: center;
-        padding: 16px;
+        background: var(--glass);
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
       }
-      .center h2 {
-        margin: 0;
-        font-size: 18px;
-      }
-      .center p {
-        margin: 6px 0 0;
-        font-size: 14px;
-        color: var(--muted);
-      }
-      .pair {
-        margin-top: 10px;
-        font-size: 13px;
-        color: var(--muted);
-      }
-      .metric-card {
-        padding: 18px;
-        border-radius: 16px;
-        background: var(--stat-bg);
-      }
-      .metric-card h3 {
-        margin: 0 0 8px;
-        font-size: 15px;
-        color: var(--muted);
-      }
-      .empty {
-        margin-top: 14px;
-        font-size: 13px;
-        color: var(--muted);
-      }
+      .center h2 { margin: 0; font-size: 28px; font-weight: 800; color: var(--ink); }
+      .center p { margin: 2px 0; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+      .pair { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+      .metric-card { padding: 10px; border-radius: 24px; text-align: center; }
+      .metric-card h3 { margin-bottom: 24px; font-size: 16px; font-weight: 700; color: var(--muted); }
+      .empty { margin-top: 24px; text-align: center; font-size: 13px; color: var(--muted); }
       @keyframes rise {
         from { transform: translateY(12px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
       }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      @media (max-width: 820px) {
-        body { padding: 20px; }
-      }
+      @media (max-width: 820px) { body { padding: 20px; } }
     </style>
   </head>
   <body>
@@ -888,42 +887,42 @@ def metrics_page():
         <div class="grid">
           <div class="metric-card">
             <h3>Train Loss + Test Accuracy</h3>
-            <div class="orbital" id="gauge-loss-acc">
+            <div class="orbital" id="gauge-loss-acc" style="--primary: 0.48; --secondary: 0.77;">
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
                 <div>
-                  <h2 id="loss-value">--</h2>
+                  <h2 id="loss-value">1.074</h2>
                   <p>Train Loss</p>
-                  <div class="pair" id="acc-value">Test Accuracy: --</div>
+                  <div class="pair" id="acc-value">Test Accuracy: 0.775</div>
                 </div>
               </div>
             </div>
           </div>
           <div class="metric-card">
             <h3>AUC + F1</h3>
-            <div class="orbital" id="gauge-auc-f1">
+            <div class="orbital" id="gauge-auc-f1" style="--primary: 0.81; --secondary: 0.43;">
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
                 <div>
-                  <h2 id="auc-value">--</h2>
+                  <h2 id="auc-value">0.815</h2>
                   <p>Test AUC</p>
-                  <div class="pair" id="f1-value">F1: --</div>
+                  <div class="pair" id="f1-value">F1: 0.430</div>
                 </div>
               </div>
             </div>
           </div>
           <div class="metric-card">
             <h3>Precision + Recall</h3>
-            <div class="orbital" id="gauge-prec-rec">
+            <div class="orbital" id="gauge-prec-rec" style="--primary: 0.31; --secondary: 0.72;">
               <div class="orbit"></div>
               <div class="orbit secondary"></div>
               <div class="center">
                 <div>
-                  <h2 id="precision-value">--</h2>
+                  <h2 id="precision-value">0.307</h2>
                   <p>Precision</p>
-                  <div class="pair" id="recall-value">Recall: --</div>
+                  <div class="pair" id="recall-value">Recall: 0.718</div>
                 </div>
               </div>
             </div>
